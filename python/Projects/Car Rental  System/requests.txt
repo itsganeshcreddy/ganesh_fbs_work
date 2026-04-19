@@ -1,0 +1,7 @@
+ganesh,101,05-01-2026 10:03,Final:Rs15000,Paid:Rs3750.00+Rs11250.00,Method:Cash+Online
+ganesh,101,07-01-2026 23:37,Final:Rs1500,Paid:Rs1500.00+Rs0.00,Method:Online+Online
+ganesh,111,08-01-2026 13:28,Final:Rs24000,Paid:Rs8000.00+Rs16000.00,Method:Online+Cash
+gopal123,102,08-01-2026 23:34,Final:Rs8000,Paid:Rs12000.00+Rs-4000.00,Method:Online+Online
+rushi_123,102,19-02-2026 20:51,Final:Rs2000,Paid:Rs4000.00+Rs-2000.00,Method:Online+Online
+gopal123,101,19-02-2026 20:57,Final:Rs63000,Paid:Rs9000.00+Rs54000.00,Method:Cash+Online
+ganesh123,102,07-03-2026 09:25,Final:Rs2000,Paid:Rs2000.00+Rs0.00,Method:Cash+Cash

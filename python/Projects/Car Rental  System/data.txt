@@ -1,0 +1,6 @@
+102,ertiga,2000,2
+103,nexa baleno,5000,1
+101,swiftt,1500,5
+111,ferarri,1111,1
+121,fortuner,6000,1
+
