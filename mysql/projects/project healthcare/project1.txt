@@ -1,0 +1,539 @@
+mysql> create database healthcare;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| fbs                |
+| firstbit           |
+| healthcare         |
+| information_schema |
+| mysql              |
+| online_exam        |
+| performance_schema |
+| store              |
+| students           |
+| sys                |
++--------------------+
+10 rows in set (0.00 sec)
+
+mysql> use healthcare;
+Database changed
+
+mysql> create table insurance(
+    -> insurance_id int primary key,
+    -> policy_no varchar(20),
+    -> provider_name varchar(20),
+    -> coverage_details varchar(20) not null);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table patient(
+    -> patient_id int primary key,
+    -> first_name varchar(20) not null,
+    -> last_name varchar(20) not null,
+    -> DOB date not null,
+    -> email varchar(50),
+    -> insurance_id int,
+    -> phone varchar(20),
+    -> gender varchar(10),
+    -> foreign key(insurance_id)references
+    -> insurance(insurance_id));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table doctor(
+    -> doctor_id int primary key,
+    -> doctor_name varchar(30) not null,
+    -> specialization varchar(50) not null,
+    -> phone varchar(20) not null,
+    -> email varchar(50) not null);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> create table encounter(
+    -> encounter_id int primary key,
+    -> patient_id int,
+    -> doctor_id int,
+    -> encounter_type varchar(50),
+    -> encounter_date date not null,
+    -> admission_date date not null,
+    -> discharge_date date not null,
+    -> foreign key(patient_id)references
+    -> patient(patient_id),
+    -> foreign key(doctor_id)references
+    -> doctor(doctor_id));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table diagonastic_test(
+    -> test_id int primary key,
+    -> encounter_id int,
+    -> test_name varchar(50),
+    -> test_date date,
+    -> result text,
+    -> foreign key(encounter_id)references
+    -> encounter(encounter_id));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table history(
+    -> history_id int primary key,
+    -> patient_id int,
+    -> diagnosis text,
+    -> allergies text,
+    -> medication text,
+    -> past_treatments text,
+    -> foreign key(patient_id)references
+    -> patient(patient_id));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table procedures(
+    -> procedure_id int primary key,
+    -> patient_id int,
+    -> doctor_id int,
+    -> procedure_date date,
+    -> procedure_name varchar(50),
+    -> surgeries varchar(50),
+    -> foreign key(patient_id)references
+    -> patient(patient_id),
+    -> foreign key(doctor_id)references
+    -> doctor(doctor_id));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table prescription(
+    -> prescription_id int primary key,
+    -> patient_id int,
+    -> doctor_id int,
+    -> medication_name varchar(50),
+    -> dosages varchar(50),
+    -> prescription_date date,
+    -> foreign key(patient_id)references
+    -> patient(patient_id),
+    -> foreign key(doctor_id)references
+    -> doctor(doctor_id));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table treatment(
+    -> treatment_id int primary key,
+    -> patient_id int,
+    -> doctor_id int,
+    -> treatment_date date,
+    -> encounter_id int,
+    -> foreign key(patient_id)references
+    -> patient(patient_id),
+    -> foreign key(doctor_id)references
+    -> doctor(doctor_id),
+    -> foreign key(encounter_id)references
+    -> encounter(encounter_id));
+Query OK, 0 rows affected (0.05 sec)
+
+
+mysql> show tables;
++----------------------+
+| Tables_in_healthcare |
++----------------------+
+| diagonastic_test     |
+| doctor               |
+| encounter            |
+| history              |
+| insurance            |
+| patient              |
+| prescription         |
+| procedures           |
+| treatment            |
++----------------------+
+9 rows in set (0.02 sec)
+
+mysql> desc diagonastic_test;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| test_id      | int         | NO   | PRI | NULL    |       |
+| encounter_id | int         | YES  | MUL | NULL    |       |
+| test_name    | varchar(50) | YES  |     | NULL    |       |
+| test_date    | date        | YES  |     | NULL    |       |
+| result       | text        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> desc doctor;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| doctor_id      | int         | NO   | PRI | NULL    |       |
+| doctor_name    | varchar(30) | NO   |     | NULL    |       |
+| specialization | varchar(50) | NO   |     | NULL    |       |
+| phone          | varchar(20) | NO   |     | NULL    |       |
+| email          | varchar(50) | NO   |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> desc encounter;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| encounter_id   | int         | NO   | PRI | NULL    |       |
+| patient_id     | int         | YES  | MUL | NULL    |       |
+| doctor_id      | int         | YES  | MUL | NULL    |       |
+| encounter_type | varchar(50) | YES  |     | NULL    |       |
+| encounter_date | date        | NO   |     | NULL    |       |
+| admission_date | date        | NO   |     | NULL    |       |
+| discharge_date | date        | NO   |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> desc history;
++-----------------+------+------+-----+---------+-------+
+| Field           | Type | Null | Key | Default | Extra |
++-----------------+------+------+-----+---------+-------+
+| history_id      | int  | NO   | PRI | NULL    |       |
+| patient_id      | int  | YES  | MUL | NULL    |       |
+| diagnosis       | text | YES  |     | NULL    |       |
+| allergies       | text | YES  |     | NULL    |       |
+| medication      | text | YES  |     | NULL    |       |
+| past_treatments | text | YES  |     | NULL    |       |
++-----------------+------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> desc insurance;
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| insurance_id     | int         | NO   | PRI | NULL    |       |
+| policy_no        | varchar(20) | YES  |     | NULL    |       |
+| provider_name    | varchar(20) | YES  |     | NULL    |       |
+| coverage_details | varchar(20) | NO   |     | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc patient;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| patient_id   | int         | NO   | PRI | NULL    |       |
+| first_name   | varchar(20) | NO   |     | NULL    |       |
+| last_name    | varchar(20) | NO   |     | NULL    |       |
+| DOB          | date        | NO   |     | NULL    |       |
+| email        | varchar(50) | YES  |     | NULL    |       |
+| insurance_id | int         | YES  | MUL | NULL    |       |
+| phone        | varchar(20) | YES  |     | NULL    |       |
+| gender       | varchar(10) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> desc prescription;
++-------------------+-------------+------+-----+---------+-------+
+| Field             | Type        | Null | Key | Default | Extra |
++-------------------+-------------+------+-----+---------+-------+
+| prescription_id   | int         | NO   | PRI | NULL    |       |
+| patient_id        | int         | YES  | MUL | NULL    |       |
+| doctor_id         | int         | YES  | MUL | NULL    |       |
+| medication_name   | varchar(50) | YES  |     | NULL    |       |
+| dosages           | varchar(50) | YES  |     | NULL    |       |
+| prescription_date | date        | YES  |     | NULL    |       |
++-------------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> desc procedures;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| procedure_id   | int         | NO   | PRI | NULL    |       |
+| patient_id     | int         | YES  | MUL | NULL    |       |
+| doctor_id      | int         | YES  | MUL | NULL    |       |
+| procedure_date | date        | YES  |     | NULL    |       |
+| procedure_name | varchar(50) | YES  |     | NULL    |       |
+| surgeries      | varchar(50) | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> desc treatment;
++----------------+------+------+-----+---------+-------+
+| Field          | Type | Null | Key | Default | Extra |
++----------------+------+------+-----+---------+-------+
+| treatment_id   | int  | NO   | PRI | NULL    |       |
+| patient_id     | int  | YES  | MUL | NULL    |       |
+| doctor_id      | int  | YES  | MUL | NULL    |       |
+| treatment_date | date | YES  |     | NULL    |       |
+| encounter_id   | int  | YES  | MUL | NULL    |       |
++----------------+------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+mysql> INSERT INTO insurance VALUES
+    -> (1,'POL1001','Star Health','Full Coverage'),
+    -> (2,'POL1002','LIC Health','Basic Coverage'),
+    -> (3,'POL1003','HDFC Ergo','Premium Plan'),
+    -> (4,'POL1004','ICICI Lombard','Family Plan'),
+    -> (5,'POL1005','Max Bupa','Gold Plan'),
+    -> (6,'POL1006','Bajaj Allianz','Silver Plan'),
+    -> (7,'POL1007','Care Health','Standard Plan'),
+    -> (8,'POL1008','Religare','Platinum Plan'),
+    -> (9,'POL1009','New India','Basic Plan'),
+    -> (10,'POL1010','Tata AIG','Comprehensive Plan');
+Query OK, 10 rows affected (0.03 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO patient VALUES
+    -> (1,'Amit','Patil','1995-05-10','amit@gmail.com',1,'9000000001','Male'),
+    -> (2,'Ganesh','Shinde','1998-07-21','ganesh@gmail.com',2,'9000000002','male'),
+    -> (3,'Rahul','Rathod','1993-09-15','rahul@gmail.com',3,'9000000003','Male'),
+    -> (4,'Sakshi','Deshmukh','2000-01-12','Sakshi@gmail.com',4,'9000000004','Female'),
+    -> (5,'Rohit','Mane','1992-03-18','rohit@gmail.com',5,'9000000005','Male'),
+    -> (6,'Ankita','Jadhav','1996-11-30','ankita@gmail.com',6,'9000000006','Female'),
+    -> (7,'Vikas','Jadhav','1991-08-25','vikas@gmail.com',7,'9000000007','Male'),
+    -> (8,'Neha','Singh','1999-04-14','neha@gmail.com',8,'9000000008','Female'),
+    -> (9,'Sagar','Mali','1994-06-19','sagar@gmail.com',9,'9000000009','Male'),
+    -> (10,'Pooja','Chavhan','1997-12-22','pooja@gmail.com',10,'9000000010','Female');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO doctor VALUES
+    -> (1,'Dr. Sharma','Cardiologist','9876543210','sharma@gmail.com'),
+    -> (2,'Dr. Patil','Dermatologist','9876543211','patil@gmail.com'),
+    -> (3,'Dr. Khan','Orthopedic','9876543212','khan@gmail.com'),
+    -> (4,'Dr. Mehta','Neurologist','9876543213','mehta@gmail.com'),
+    -> (5,'Dr. Joshi','Pediatrician','9876543214','joshi@gmail.com'),
+    -> (6,'Dr. Rao','ENT','9876543215','rao@gmail.com'),
+    -> (7,'Dr. Verma','Psychiatrist','9876543216','verma@gmail.com'),
+    -> (8,'Dr. Singh','Oncologist','9876543217','singh@gmail.com'),
+    -> (9,'Dr. Desai','Gynecologist','9876543218','desai@gmail.com'),
+    -> (10,'Dr. Kulkarni','General Physician','9876543219','kulkarni@gmail.com');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO encounter VALUES
+    -> (111,1,1,'Outpatient','2026-01-01','2026-01-01','2026-01-01'),
+    -> (112,2,2,'Inpatient','2026-01-02','2026-01-02','2026-01-05'),
+    -> (113,3,3,'Emergency','2026-01-03','2026-01-03','2026-01-04'),
+    -> (114,4,1,'Outpatient','2026-01-04','2026-01-04','2026-01-04'),
+    -> (115,5,2,'Inpatient','2026-01-05','2026-01-05','2026-01-08'),
+    -> (116,6,3,'Emergency','2026-01-06','2026-01-06','2026-01-07'),
+    -> (117,7,1,'Outpatient','2026-01-07','2026-01-07','2026-01-07'),
+    -> (118,8,2,'Inpatient','2026-01-08','2026-01-08','2026-01-10'),
+    -> (119,9,3,'Emergency','2026-01-09','2026-01-09','2026-01-11'),
+    -> (120,10,1,'Outpatient','2026-01-10','2026-01-10','2026-01-10');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO diagonastic_test VALUES
+    -> (1,111,'Blood Test','2026-01-01','Normal'),
+    -> (2,112,'X-Ray','2026-01-02','Fracture Detected'),
+    -> (3,113,'MRI Scan','2026-01-03','Normal'),
+    -> (4,114,'ECG','2026-01-04','Mild Abnormality'),
+    -> (5,115,'Urine Test','2026-01-05','Normal'),
+    -> (6,116,'CT Scan','2026-01-06','Minor Issue'),
+    -> (7,117,'Allergy Test','2026-01-07','Positive'),
+    -> (8,118,'Biopsy','2026-01-08','Negative'),
+    -> (9,119,'Ultrasound','2026-01-09','Normal'),
+    -> (10,120,'CBC','2026-01-10','Normal');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO prescription VALUES
+    -> (401,1,1,'Paracetamol','500mg twice daily','2026-01-01'),
+    -> (402,2,2,'Amoxicillin','250mg three times daily','2026-01-02'),
+    -> (403,3,3,'Ibuprofen','400mg twice daily','2026-01-03'),
+    -> (404,4,1,'Metformin','500mg once daily','2026-01-04'),
+    -> (405,5,2,'Aspirin','75mg once daily','2026-01-05'),
+    -> (406,6,3,'Azithromycin','500mg once daily','2026-01-06'),
+    -> (407,7,1,'Cetirizine','10mg once daily','2026-01-07'),
+    -> (408,8,2,'Insulin','10 units daily','2026-01-08'),
+    -> (409,9,3,'Losartan','50mg once daily','2026-01-09'),
+    -> (410,10,1,'Vitamin D','600 IU daily','2026-01-10');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO procedures VALUES
+    -> (301,1,1,'2026-01-01','Angioplasty','Heart Surgery'),
+    -> (302,2,2,'2026-01-02','Skin Biopsy','Minor Surgery'),
+    -> (303,3,3,'2026-01-03','Knee Replacement','Orthopedic Surgery'),
+    -> (304,4,1,'2026-01-04','ECG Procedure','Diagnostic Procedure'),
+    -> (305,5,2,'2026-01-05','Appendectomy','General Surgery'),
+    -> (306,6,3,'2026-01-06','Ear Surgery','ENT Surgery'),
+    -> (307,7,1,'2026-01-07','Therapy Session','Psychiatric Procedure'),
+    -> (308,8,2,'2026-01-08','Chemotherapy','Cancer Treatment'),
+    -> (309,9,3,'2026-01-09','C-Section','Gynecology Surgery'),
+    -> (310,10,1,'2026-01-10','General Checkup','Routine Procedure');
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO treatment VALUES
+    -> (201,1,1,'2026-01-01',111),
+    -> (202,2,2,'2026-01-02',112),
+    -> (203,3,3,'2026-01-03',113),
+    -> (204,4,1,'2026-01-04',114),
+    -> (205,5,2,'2026-01-05',115),
+    -> (206,6,3,'2026-01-06',116),
+    -> (207,7,1,'2026-01-07',117),
+    -> (208,8,2,'2026-01-08',118),
+    -> (209,9,3,'2026-01-09',119),
+    -> (210,10,1,'2026-01-10',120);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO history VALUES
+    -> (101,1,'Hypertension','None','Amlodipine','Regular BP monitoring'),
+    -> (102,2,'Diabetes Type 2','Penicillin','Metformin','Diet control therapy'),
+    -> (103,3,'Asthma','Dust','Inhaler','Nebulization treatment'),
+    -> (104,4,'Migraine','None','Sumatriptan','Pain management'),
+    -> (105,5,'Thyroid Disorder','Seafood','Levothyroxine','Hormone therapy'),
+    -> (106,6,'Anemia','None','Iron supplements','Blood monitoring'),
+    -> (107,7,'Arthritis','Pollen','Ibuprofen','Physiotherapy'),
+    -> (108,8,'Gastritis','Spicy food','Antacids','Diet modification'),
+    -> (109,9,'Depression','None','Sertraline','Counseling'),
+    -> (110,10,'Allergic Rhinitis','Pollen','Antihistamines','Allergy shots');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> select * from doctor;
++-----------+--------------+-------------------+------------+--------------------+
+| doctor_id | doctor_name  | specialization    | phone      | email              |
++-----------+--------------+-------------------+------------+--------------------+
+|         1 | Dr. Sharma   | Cardiologist      | 9876543210 | sharma@gmail.com   |
+|         2 | Dr. Patil    | Dermatologist     | 9876543211 | patil@gmail.com    |
+|         3 | Dr. Khan     | Orthopedic        | 9876543212 | khan@gmail.com     |
+|         4 | Dr. Mehta    | Neurologist       | 9876543213 | mehta@gmail.com    |
+|         5 | Dr. Joshi    | Pediatrician      | 9876543214 | joshi@gmail.com    |
+|         6 | Dr. Rao      | ENT               | 9876543215 | rao@gmail.com      |
+|         7 | Dr. Verma    | Psychiatrist      | 9876543216 | verma@gmail.com    |
+|         8 | Dr. Singh    | Oncologist        | 9876543217 | singh@gmail.com    |
+|         9 | Dr. Desai    | Gynecologist      | 9876543218 | desai@gmail.com    |
+|        10 | Dr. Kulkarni | General Physician | 9876543219 | kulkarni@gmail.com |
++-----------+--------------+-------------------+------------+--------------------+
+10 rows in set (0.01 sec)
+
+mysql> select * from patient;
++------------+------------+-----------+------------+------------------+--------------+------------+--------+
+| patient_id | first_name | last_name | DOB        | email            | insurance_id | phone      | gender |
++------------+------------+-----------+------------+------------------+--------------+------------+--------+
+|          1 | Amit       | Patil     | 1995-05-10 | amit@gmail.com   |            1 | 9000000001 | Male   |
+|          2 | Ganesh     | Shinde    | 1998-07-21 | ganesh@gmail.com |            2 | 9000000002 | male   |
+|          3 | Rahul      | Rathod    | 1993-09-15 | rahul@gmail.com  |            3 | 9000000003 | Male   |
+|          4 | Sakshi     | Deshmukh  | 2000-01-12 | Sakshi@gmail.com |            4 | 9000000004 | Female |
+|          5 | Rohit      | Mane      | 1992-03-18 | rohit@gmail.com  |            5 | 9000000005 | Male   |
+|          6 | Ankita     | Jadhav    | 1996-11-30 | ankita@gmail.com |            6 | 9000000006 | Female |
+|          7 | Vikas      | Jadhav    | 1991-08-25 | vikas@gmail.com  |            7 | 9000000007 | Male   |
+|          8 | Neha       | Singh     | 1999-04-14 | neha@gmail.com   |            8 | 9000000008 | Female |
+|          9 | Sagar      | Mali      | 1994-06-19 | sagar@gmail.com  |            9 | 9000000009 | Male   |
+|         10 | Pooja      | Chavhan   | 1997-12-22 | pooja@gmail.com  |           10 | 9000000010 | Female |
++------------+------------+-----------+------------+------------------+--------------+------------+--------+
+10 rows in set (0.00 sec)
+
+mysql> select * from insurance;
++--------------+-----------+---------------+--------------------+
+| insurance_id | policy_no | provider_name | coverage_details   |
++--------------+-----------+---------------+--------------------+
+|            1 | POL1001   | Star Health   | Full Coverage      |
+|            2 | POL1002   | LIC Health    | Basic Coverage     |
+|            3 | POL1003   | HDFC Ergo     | Premium Plan       |
+|            4 | POL1004   | ICICI Lombard | Family Plan        |
+|            5 | POL1005   | Max Bupa      | Gold Plan          |
+|            6 | POL1006   | Bajaj Allianz | Silver Plan        |
+|            7 | POL1007   | Care Health   | Standard Plan      |
+|            8 | POL1008   | Religare      | Platinum Plan      |
+|            9 | POL1009   | New India     | Basic Plan         |
+|           10 | POL1010   | Tata AIG      | Comprehensive Plan |
++--------------+-----------+---------------+--------------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from encounter;
++--------------+------------+-----------+----------------+----------------+----------------+----------------+
+| encounter_id | patient_id | doctor_id | encounter_type | encounter_date | admission_date | discharge_date |
++--------------+------------+-----------+----------------+----------------+----------------+----------------+
+|          111 |          1 |         1 | Outpatient     | 2026-01-01     | 2026-01-01     | 2026-01-01     |
+|          112 |          2 |         2 | Inpatient      | 2026-01-02     | 2026-01-02     | 2026-01-05     |
+|          113 |          3 |         3 | Emergency      | 2026-01-03     | 2026-01-03     | 2026-01-04     |
+|          114 |          4 |         1 | Outpatient     | 2026-01-04     | 2026-01-04     | 2026-01-04     |
+|          115 |          5 |         2 | Inpatient      | 2026-01-05     | 2026-01-05     | 2026-01-08     |
+|          116 |          6 |         3 | Emergency      | 2026-01-06     | 2026-01-06     | 2026-01-07     |
+|          117 |          7 |         1 | Outpatient     | 2026-01-07     | 2026-01-07     | 2026-01-07     |
+|          118 |          8 |         2 | Inpatient      | 2026-01-08     | 2026-01-08     | 2026-01-10     |
+|          119 |          9 |         3 | Emergency      | 2026-01-09     | 2026-01-09     | 2026-01-11     |
+|          120 |         10 |         1 | Outpatient     | 2026-01-10     | 2026-01-10     | 2026-01-10     |
++--------------+------------+-----------+----------------+----------------+----------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from diagonastic_test;
++---------+--------------+--------------+------------+-------------------+
+| test_id | encounter_id | test_name    | test_date  | result            |
++---------+--------------+--------------+------------+-------------------+
+|       1 |          111 | Blood Test   | 2026-01-01 | Normal            |
+|       2 |          112 | X-Ray        | 2026-01-02 | Fracture Detected |
+|       3 |          113 | MRI Scan     | 2026-01-03 | Normal            |
+|       4 |          114 | ECG          | 2026-01-04 | Mild Abnormality  |
+|       5 |          115 | Urine Test   | 2026-01-05 | Normal            |
+|       6 |          116 | CT Scan      | 2026-01-06 | Minor Issue       |
+|       7 |          117 | Allergy Test | 2026-01-07 | Positive          |
+|       8 |          118 | Biopsy       | 2026-01-08 | Negative          |
+|       9 |          119 | Ultrasound   | 2026-01-09 | Normal            |
+|      10 |          120 | CBC          | 2026-01-10 | Normal            |
++---------+--------------+--------------+------------+-------------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from prescription;
++-----------------+------------+-----------+-----------------+-------------------------+-------------------+
+| prescription_id | patient_id | doctor_id | medication_name | dosages                 | prescription_date |
++-----------------+------------+-----------+-----------------+-------------------------+-------------------+
+|             401 |          1 |         1 | Paracetamol     | 500mg twice daily       | 2026-01-01        |
+|             402 |          2 |         2 | Amoxicillin     | 250mg three times daily | 2026-01-02        |
+|             403 |          3 |         3 | Ibuprofen       | 400mg twice daily       | 2026-01-03        |
+|             404 |          4 |         1 | Metformin       | 500mg once daily        | 2026-01-04        |
+|             405 |          5 |         2 | Aspirin         | 75mg once daily         | 2026-01-05        |
+|             406 |          6 |         3 | Azithromycin    | 500mg once daily        | 2026-01-06        |
+|             407 |          7 |         1 | Cetirizine      | 10mg once daily         | 2026-01-07        |
+|             408 |          8 |         2 | Insulin         | 10 units daily          | 2026-01-08        |
+|             409 |          9 |         3 | Losartan        | 50mg once daily         | 2026-01-09        |
+|             410 |         10 |         1 | Vitamin D       | 600 IU daily            | 2026-01-10        |
++-----------------+------------+-----------+-----------------+-------------------------+-------------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from procedures;
++--------------+------------+-----------+----------------+------------------+-----------------------+
+| procedure_id | patient_id | doctor_id | procedure_date | procedure_name   | surgeries             |
++--------------+------------+-----------+----------------+------------------+-----------------------+
+|          301 |          1 |         1 | 2026-01-01     | Angioplasty      | Heart Surgery         |
+|          302 |          2 |         2 | 2026-01-02     | Skin Biopsy      | Minor Surgery         |
+|          303 |          3 |         3 | 2026-01-03     | Knee Replacement | Orthopedic Surgery    |
+|          304 |          4 |         1 | 2026-01-04     | ECG Procedure    | Diagnostic Procedure  |
+|          305 |          5 |         2 | 2026-01-05     | Appendectomy     | General Surgery       |
+|          306 |          6 |         3 | 2026-01-06     | Ear Surgery      | ENT Surgery           |
+|          307 |          7 |         1 | 2026-01-07     | Therapy Session  | Psychiatric Procedure |
+|          308 |          8 |         2 | 2026-01-08     | Chemotherapy     | Cancer Treatment      |
+|          309 |          9 |         3 | 2026-01-09     | C-Section        | Gynecology Surgery    |
+|          310 |         10 |         1 | 2026-01-10     | General Checkup  | Routine Procedure     |
++--------------+------------+-----------+----------------+------------------+-----------------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from treatment;
++--------------+------------+-----------+----------------+--------------+
+| treatment_id | patient_id | doctor_id | treatment_date | encounter_id |
++--------------+------------+-----------+----------------+--------------+
+|          201 |          1 |         1 | 2026-01-01     |          111 |
+|          202 |          2 |         2 | 2026-01-02     |          112 |
+|          203 |          3 |         3 | 2026-01-03     |          113 |
+|          204 |          4 |         1 | 2026-01-04     |          114 |
+|          205 |          5 |         2 | 2026-01-05     |          115 |
+|          206 |          6 |         3 | 2026-01-06     |          116 |
+|          207 |          7 |         1 | 2026-01-07     |          117 |
+|          208 |          8 |         2 | 2026-01-08     |          118 |
+|          209 |          9 |         3 | 2026-01-09     |          119 |
+|          210 |         10 |         1 | 2026-01-10     |          120 |
++--------------+------------+-----------+----------------+--------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from history;
++------------+------------+-------------------+------------+------------------+------------------------+
+| history_id | patient_id | diagnosis         | allergies  | medication       | past_treatments        |
++------------+------------+-------------------+------------+------------------+------------------------+
+|        101 |          1 | Hypertension      | None       | Amlodipine       | Regular BP monitoring  |
+|        102 |          2 | Diabetes Type 2   | Penicillin | Metformin        | Diet control therapy   |
+|        103 |          3 | Asthma            | Dust       | Inhaler          | Nebulization treatment |
+|        104 |          4 | Migraine          | None       | Sumatriptan      | Pain management        |
+|        105 |          5 | Thyroid Disorder  | Seafood    | Levothyroxine    | Hormone therapy        |
+|        106 |          6 | Anemia            | None       | Iron supplements | Blood monitoring       |
+|        107 |          7 | Arthritis         | Pollen     | Ibuprofen        | Physiotherapy          |
+|        108 |          8 | Gastritis         | Spicy food | Antacids         | Diet modification      |
+|        109 |          9 | Depression        | None       | Sertraline       | Counseling             |
+|        110 |         10 | Allergic Rhinitis | Pollen     | Antihistamines   | Allergy shots          |
++------------+------------+-------------------+------------+------------------+------------------------+
+10 rows in set (0.00 sec)
+
+
